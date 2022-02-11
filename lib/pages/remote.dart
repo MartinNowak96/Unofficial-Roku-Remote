@@ -4,10 +4,21 @@ import 'package:http/http.dart' as http;
 
 import '../widget/navifation_drawer_widget.dart';
 
-class RemotePage extends StatelessWidget {
+class RemotePage extends StatefulWidget {
   const RemotePage({Key? key}) : super(key: key);
 
+  @override
+  State<RemotePage> createState() => _RemotePageState();
+}
+
+class _RemotePageState extends State<RemotePage> {
+  String ipAddress = '';
+
   Future<void> buttonPressed(String key) async {
+    if (ipAddress == '') {
+      return;
+    }
+
     var url = Uri.parse('http://192.168.1.95:8060/keypress/' + key);
     var response = await http.post(url);
     if (kDebugMode) {

@@ -38,6 +38,7 @@ dependencies:
   wifi: 0.1.5
   network_info_plus: ^2.1.2
   ping_discover_network_forked: ^0.0.1
+  localstorage: ^4.0.0+1
 
 dev_dependencies:
   flutter_test:
