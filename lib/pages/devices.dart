@@ -54,12 +54,13 @@ class _DevicePageState extends State<DevicePage> {
         if (response.body.contains('roku')) {
           print(ip + " is roku");
           String deviceName = '';
-          const String startingName = '<friendlyName>55&quot;';
+          const String startingName = '<friendlyName>';
           deviceName = response.body
               .substring(
                   response.body.indexOf(startingName) + startingName.length,
                   response.body.indexOf('</friendlyName>'))
               .trim();
+          deviceName = deviceName.replaceAll('&quot;', '"');
           print(deviceName);
           devices.add(RokuDevice(ip, deviceName));
           setState(() {});
@@ -77,14 +78,6 @@ class _DevicePageState extends State<DevicePage> {
     storage.setItem("selectedDeviceIp", device.ip);
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const RemotePage()));
-  }
-
-  Future<void> buttonPressed(String key) async {
-    var url = Uri.parse('http://192.168.1.95:8060/keypress/' + key);
-    var response = await http.post(url);
-    if (kDebugMode) {
-      print(response.body);
-    }
   }
 
   @override

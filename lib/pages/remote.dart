@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:localstorage/localstorage.dart';
 
 import '../widget/navifation_drawer_widget.dart';
 
@@ -13,13 +14,23 @@ class RemotePage extends StatefulWidget {
 
 class _RemotePageState extends State<RemotePage> {
   String ipAddress = '';
+  final LocalStorage storage = LocalStorage('roku');
+
+  @override
+  void initState() {
+    super.initState();
+    var ip = storage.getItem('selectedDeviceIp');
+    if (ip != null) {
+      ipAddress = ip;
+    }
+  }
 
   Future<void> buttonPressed(String key) async {
     if (ipAddress == '') {
       return;
     }
 
-    var url = Uri.parse('http://192.168.1.95:8060/keypress/' + key);
+    var url = Uri.parse('http://' + ipAddress + ':8060/keypress/' + key);
     var response = await http.post(url);
     if (kDebugMode) {
       print(response.body);
