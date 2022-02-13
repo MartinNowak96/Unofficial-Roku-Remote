@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  keyboard_event
   network_info_plus_windows
 )
 

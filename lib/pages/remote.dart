@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:localstorage/localstorage.dart';
-
 import '../widget/navifation_drawer_widget.dart';
 
 class RemotePage extends StatefulWidget {
@@ -19,10 +19,41 @@ class _RemotePageState extends State<RemotePage> {
   @override
   void initState() {
     super.initState();
-    var ip = storage.getItem('selectedDeviceIp');
-    if (ip != null) {
-      ipAddress = ip;
+    storage.ready.then((value) {
+      var ip = storage.getItem('selectedDeviceIp');
+      if (ip != null) {
+        ipAddress = ip;
+      }
+    });
+  }
+
+  keyPressed(RawKeyEvent keyEvent) {
+    if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+      buttonPressed('up');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+      buttonPressed('down');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
+      buttonPressed('left');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
+      buttonPressed('right');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.audioVolumeUp)) {
+      buttonPressed('volumeup');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.audioVolumeDown)) {
+      buttonPressed('volumedown');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.enter)) {
+      buttonPressed('select');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.home) ||
+        keyEvent.isKeyPressed(LogicalKeyboardKey.goHome)) {
+      buttonPressed('home');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.goBack) ||
+        keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
+      buttonPressed('back');
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> buttonPressed(String key) async {
@@ -38,7 +69,11 @@ class _RemotePageState extends State<RemotePage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: keyPressed,
+      autofocus: true,
+      child: Scaffold(
         drawer: const NavigationDrawerWidget(),
         appBar: AppBar(
           title: const Text('Roku Remote'),
@@ -80,5 +115,5 @@ class _RemotePageState extends State<RemotePage> {
             ],
           ),
         ),
-      );
+      ));
 }
