@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:localstorage/localstorage.dart';
 import '../widget/navifation_drawer_widget.dart';
+import 'package:xml/xml.dart';
 
 class RemotePage extends StatefulWidget {
   const RemotePage({Key? key}) : super(key: key);
@@ -23,11 +24,12 @@ class _RemotePageState extends State<RemotePage> {
       var ip = storage.getItem('selectedDeviceIp');
       if (ip != null) {
         ipAddress = ip;
+        getApps();
       }
     });
   }
 
-  keyPressed(RawKeyEvent keyEvent) {
+  void keyPressed(RawKeyEvent keyEvent) {
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
       buttonPressed('up');
     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
@@ -48,6 +50,20 @@ class _RemotePageState extends State<RemotePage> {
     } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.goBack) ||
         keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
       buttonPressed('back');
+    } else if (keyEvent.isKeyPressed(LogicalKeyboardKey.audioVolumeMute)) {
+      buttonPressed('mute');
+    }
+  }
+
+  Future<void> getApps() async {
+    if (ipAddress == '') {
+      return;
+    }
+
+    var url = Uri.parse('http://' + ipAddress + ':8060/query/apps');
+    var response = await http.post(url);
+    if (response.statusCode <= 200 && response.statusCode < 400) {
+      final document = XmlDocument.parse(response.body);
     }
   }
 
@@ -101,6 +117,9 @@ class _RemotePageState extends State<RemotePage> {
                   onTap: () => {buttonPressed('power')},
                   child: const Icon(Icons.power_settings_new_outlined)),
               GestureDetector(
+                  onTap: () => {buttonPressed('home')},
+                  child: const Icon(Icons.home)),
+              GestureDetector(
                   onTap: () => {buttonPressed('up')},
                   child: const Icon(Icons.keyboard_arrow_up_rounded)),
               GestureDetector(
@@ -112,6 +131,15 @@ class _RemotePageState extends State<RemotePage> {
               GestureDetector(
                   onTap: () => {buttonPressed('down')},
                   child: const Icon(Icons.keyboard_arrow_down_rounded)),
+              GestureDetector(
+                  onTap: () => {buttonPressed('volumedown')},
+                  child: const Icon(Icons.volume_down)),
+              GestureDetector(
+                  onTap: () => {buttonPressed('volumeup')},
+                  child: const Icon(Icons.volume_up)),
+              GestureDetector(
+                  onTap: () => {buttonPressed('volumemute')},
+                  child: const Icon(Icons.volume_mute)),
             ],
           ),
         ),

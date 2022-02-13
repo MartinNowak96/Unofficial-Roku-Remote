@@ -40,6 +40,7 @@ dependencies:
   localstorage: ^4.0.0+1
   flutter_app_name: ^0.1.1
   keyboard_event: ^0.3.2
+  xml: ^5.3.1
 
 flutter_app_name:
   name: "Unofficial Roku Remote"
